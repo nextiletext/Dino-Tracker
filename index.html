@@ -191,7 +191,7 @@
       margin-top: 8px;
       font-size: 0.75rem;
       font-weight: 700;
-      color: #22c55e;
+      color: #3b82f6;
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -199,7 +199,7 @@
     }
 
     .wiki-link:hover {
-      color: #4ade80;
+      color: #60a5fa;
       text-decoration: underline;
     }
 
@@ -244,9 +244,9 @@
       <div class="section-title">Behavioral Field Report</div>
       <div class="info-box" id="card-behavior">-</div>
       
-      <!-- Learn More Wikipedia Link -->
+      <!-- Custom External Wiki/Fandom Link -->
       <a id="card-wiki" href="#" target="_blank" class="wiki-link">
-        Learn More on Wikipedia ↗
+        Learn More ↗
       </a>
 
       <div class="section-title">Containment & Advisory Protocol</div>
@@ -256,6 +256,14 @@
 
   <script>
     const dinoSightings = [
+      /* --- BIOSYN HEADQUARTERS MARKER (BLUE) --- */
+      { 
+        name: "Biosyn Headquarters", lat: 85.0000, lng: 0.0000, location: "Arctic Circle", threat: "CRITICAL", diet: "N/A (Research Facility)", length: "Facility Complex",
+        customColor: "#3b82f6",
+        customUrl: "https://jurassicpark.fandom.com/wiki/Biosyn_Research_Facility",
+        behavior: "High-security global genetics research and containment sanctuary situated in isolated arctic territory. Conducts advanced apex cloning and bio-engineering operations.",
+        protocol: "Restricted airspace. Authorized personnel only. Level-5 security clearance required for entry."
+      },
       { 
         name: "Tyrannosaurus Rex", lat: 40.7128, lng: -74.0060, location: "New York, USA", threat: "CRITICAL", diet: "Carnivore", length: "12.3m",
         behavior: "Apex solitary predator. Displays ambush hunting behaviors around urban transit routes. Highly sensitive to ground vibrations.",
@@ -534,7 +542,7 @@
         protocol: "Reroute trans-Pacific oceanic research vessels. Deploy depth transponders to monitor deep-water migrations."
       },
 
-      /* --- 10 NEW MARINE PREHISTORIC REPTILES & SHARKS ADDED BELOW --- */
+      /* --- OCEANIC MARINE ANIMALS --- */
       { 
         name: "Elasmosaurus", lat: 34.0000, lng: -155.0000, location: "North Pacific Ocean", threat: "MEDIUM", diet: "Piscivore", length: "10.3m",
         behavior: "Long-necked plesiosaur with an exceptionally flexible neck. Sweeps through schools of fish and squid near the surface.",
@@ -587,8 +595,9 @@
       }
     ];
 
-    const getColor = threat => {
-      switch(threat) {
+    const getColor = item => {
+      if (item.customColor) return item.customColor;
+      switch(item.threat) {
         case 'CRITICAL': return '#ef4444';
         case 'HIGH': return '#f97316';
         case 'MEDIUM': return '#eab308';
@@ -603,6 +612,7 @@
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
       .ringsData(dinoSightings)
       .ringColor(d => t => {
+        if (d.customColor) return `rgba(59, 130, 246, ${1 - t})`;
         const c = d.threat === 'CRITICAL' ? '239, 68, 68' : d.threat === 'HIGH' ? '249, 115, 22' : '34, 197, 94';
         return `rgba(${c}, ${1 - t})`;
       })
@@ -610,7 +620,7 @@
       .ringPropagationSpeed(2.5)
       .ringRepeatPeriod(1200)
       .pointsData(dinoSightings)
-      .pointColor(d => getColor(d.threat))
+      .pointColor(d => getColor(d))
       .pointAltitude(0.02)
       .pointRadius(0.5)
       .onPointClick(point => {
@@ -635,8 +645,15 @@
       document.getElementById('card-behavior').innerText = data.behavior;
       document.getElementById('card-protocol').innerText = data.protocol;
       
-      const wikiQuery = encodeURIComponent(data.name);
-      document.getElementById('card-wiki').href = `https://en.wikipedia.org/wiki/${wikiQuery}`;
+      const wikiBtn = document.getElementById('card-wiki');
+      if (data.customUrl) {
+        wikiBtn.href = data.customUrl;
+        wikiBtn.innerText = "Learn More ↗";
+      } else {
+        const wikiQuery = encodeURIComponent(data.name);
+        wikiBtn.href = `https://en.wikipedia.org/wiki/${wikiQuery}`;
+        wikiBtn.innerText = "Learn More on Wikipedia ↗";
+      }
 
       const threatBadge = document.getElementById('card-threat');
       threatBadge.innerText = `${data.threat} THREAT`;

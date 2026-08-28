@@ -54,7 +54,6 @@
       color: #9ca3af;
     }
 
-    /* Fixed High z-index Watermark */
     .watermark {
       position: fixed;
       bottom: 20px;
@@ -97,9 +96,7 @@
       transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    #dino-card.active {
-      right: 20px;
-    }
+    #dino-card.active { right: 20px; }
 
     .card-header {
       position: relative;
@@ -124,9 +121,7 @@
       font-weight: bold;
     }
 
-    .close-btn:hover {
-      background: rgba(239, 68, 68, 0.4);
-    }
+    .close-btn:hover { background: rgba(239, 68, 68, 0.4); }
 
     .card-header h2 {
       margin: 0 0 8px 0;
@@ -149,9 +144,7 @@
     .threat-MEDIUM { background: #713f12; color: #fde047; border: 1px solid #eab308; }
     .threat-LOW { background: #14532d; color: #86efac; border: 1px solid #22c55e; }
 
-    .card-body {
-      padding: 20px;
-    }
+    .card-body { padding: 20px; }
 
     .stat-row {
       display: flex;
@@ -201,17 +194,10 @@
       color: #60a5fa;
       text-decoration: underline;
     }
-
-    #dino-card::-webkit-scrollbar {
-      width: 6px;
-    }
-    #dino-card::-webkit-scrollbar-thumb {
-      background: #374151;
-      border-radius: 3px;
-    }
   </style>
 
   <script src="//unpkg.com/globe.gl"></script>
+  <script src="//unpkg.com/three"></script>
 </head>
 <body>
 
@@ -222,7 +208,7 @@
 
   <div id="globeViz"></div>
 
-  <a href="https://guns.lol/nextile" target="_blank" class="watermark">
+  <a href="https://yourlinkhere.com" target="_blank" class="watermark">
     ©2026 NEXTILE COPYRIGHT RESREVED
   </a>
 
@@ -241,9 +227,7 @@
       <div class="section-title">Behavioral Field Report</div>
       <div class="info-box" id="card-behavior">-</div>
       
-      <a id="card-wiki" href="#" target="_blank" class="wiki-link">
-        Learn More ↗
-      </a>
+      <a id="card-wiki" href="#" target="_blank" class="wiki-link">Learn More ↗</a>
 
       <div class="section-title">Containment & Advisory Protocol</div>
       <div class="info-box" id="card-protocol">-</div>
@@ -252,7 +236,6 @@
 
   <script>
     const dinoSightings = [
-      /* --- BIOSYN HEADQUARTERS MARKER IN ITALY WITH THICK BEAM --- */
       { 
         name: "Biosyn Headquarters", lat: 46.4100, lng: 11.8500, location: "Dolomites, Italy", threat: "CRITICAL", diet: "N/A (Research Facility)", length: "Valley Complex",
         customColor: "#3b82f6",
@@ -292,303 +275,9 @@
         protocol: "Full face-shield protection mandatory for field responders. Keep high-intensity floodlights operational."
       },
       { 
-        name: "Pteranodon", lat: -1.2921, lng: 36.8219, location: "Nairobi, Kenya", threat: "MEDIUM", diet: "Piscivore", length: "6.0m Wingspan",
-        behavior: "Nests on high-elevation structures and cliffs. Dives at high speed to snatch prey from ground or water surfaces.",
-        protocol: "Ground low-flying air craft. Deploy net-cannons on rooftop perimeter stations."
-      },
-      { 
-        name: "Ankylosaurus", lat: 48.8566, lng: 2.3522, location: "Paris, France", threat: "LOW", diet: "Herbivore", length: "8.0m",
-        behavior: "Heavily armored and solitary. Docile until threatened, at which point it swings its heavy tail club with lethal force.",
-        protocol: "Do not attempt physical blockade. Use lure scents to move asset onto non-paved land."
-      },
-      { 
-        name: "Stegosaurus", lat: 19.4326, lng: -99.1332, location: "Mexico City, Mexico", threat: "MEDIUM", diet: "Herbivore", length: "9.0m",
-        behavior: "Slow-moving herbivore with a quick-reacting tail (thagomizer). Easily agitated by bright lights or flashing vehicles.",
-        protocol: "Approach from the side using suppressed vehicle engines. Never stand behind the asset."
-      },
-      { 
-        name: "Carnotaurus", lat: -34.6037, lng: -58.3816, location: "Buenos Aires, Argentina", threat: "HIGH", diet: "Carnivore", length: "7.8m",
-        behavior: "Sprint predator capable of short bursts of extreme speed. Relies on momentum and headbutting to stun prey.",
-        protocol: "Utilize barricades with sharp angles; asset cannot turn quickly while sprinting."
-      },
-      { 
-        name: "Allosaurus", lat: 37.7749, lng: -122.4194, location: "San Francisco, USA", threat: "CRITICAL", diet: "Carnivore", length: "9.7m",
-        behavior: "Aggressive secondary apex predator. Uses its upper jaw like a hatchet to slash prey in coordinated small group attacks.",
-        protocol: "Immediate area lockdown required. Rapid-response tranquilizer teams to deploy from air support."
-      },
-      { 
-        name: "Giganotosaurus", lat: -15.7975, lng: -47.8919, location: "Brasília, Brazil", threat: "CRITICAL", diet: "Carnivore", length: "13.0m",
-        behavior: "Massive theropod with immense territory range. Dominates other carnivores and aggressively hunts large targets.",
-        protocol: "Level-5 containment emergency. Heavy military-grade deterrents and tranquilizers required."
-      },
-      { 
-        name: "Baryonyx", lat: 53.4808, lng: -2.2426, location: "Manchester, UK", threat: "MEDIUM", diet: "Piscivore / Carnivore", length: "10.0m",
-        behavior: "Frequents wetlands and drainage canals. Uses hook-like thumb claws to spear aquatic prey or drag land prey into water.",
-        protocol: "Drain local canals and secure wetland perimeters with electric fencing."
-      },
-      { 
-        name: "Parasaurolophus", lat: 51.0447, lng: -114.0719, location: "Calgary, Canada", threat: "LOW", diet: "Herbivore", length: "9.5m",
-        behavior: "Social herd animal that communicates using low-frequency acoustic blasts from its cranial crest.",
-        protocol: "Monitor acoustic communications to track herd movements. Non-lethal shepherd methods effective."
-      },
-      { 
-        name: "Compsognathus", lat: 48.1351, lng: 11.5820, location: "Munich, Germany", threat: "LOW", diet: "Carnivore", length: "1.0m",
-        behavior: "Small, inquisitive pack scavengers. Harmless individually, but bold and dangerous to isolated targets in large swarms.",
-        protocol: "Deploy sonic pest deterrents. Inspect small crawlspaces and waste containers."
-      },
-      { 
-        name: "Therizinosaurus", lat: 47.9188, lng: 106.9176, location: "Ulaanbaatar, Mongolia", threat: "HIGH", diet: "Herbivore", length: "10.0m",
-        behavior: "Visually impaired but possesses hypersensitive hearing. Extremely territorial and uses 1-meter long claws defensively.",
-        protocol: "Maintain total silence around asset. Do not enter physical reach under any circumstances."
-      },
-      { 
-        name: "Pachycephalosaurus", lat: 44.0805, lng: -103.2310, location: "Rapid City, USA", threat: "MEDIUM", diet: "Herbivore", length: "4.5m",
-        behavior: "Combative behavior; uses thick domed skull to charge objects, vehicles, and rivals to establish dominance.",
-        protocol: "Do not position vehicles directly in asset line-of-sight. Use soft netting traps."
-      },
-      { 
-        name: "Gallimimus", lat: 37.5665, lng: 126.9780, location: "Seoul, South Korea", threat: "LOW", diet: "Omnivore", length: "6.0m",
-        behavior: "Extremely fast flocking animal (up to 60 km/h). Easily panicked into massive stampedes by sudden movements.",
-        protocol: "Clear roadways to prevent stampede traffic accidents. Guide flock using drone escorts."
-      },
-      { 
-        name: "Ceratosaurus", lat: 41.9028, lng: 12.4964, location: "Rome, Italy", threat: "HIGH", diet: "Carnivore", length: "6.0m",
-        behavior: "Solitary hunter identified by its distinctive nasal horn. Prefers dense brush and strikes quickly from cover.",
-        protocol: "Deploy motion-tracking sensors along forest treelines and clear brush around perimeter zones."
-      },
-      { 
-        name: "Deinonychus", lat: 45.5017, lng: -73.5673, location: "Montreal, Canada", threat: "HIGH", diet: "Carnivore", length: "3.4m",
-        behavior: "Agile, pack-oriented dromaeosaur. Uses large sickle claws to latch onto targets while leaping from elevation.",
-        protocol: "Wear reinforced Kevlar tactical gear. Secure all elevated perimeters and trees."
-      },
-      { 
-        name: "Iguanodon", lat: 50.8503, lng: 4.3517, location: "Brussels, Belgium", threat: "LOW", diet: "Herbivore", length: "10.0m",
-        behavior: "Adaptable bipedal/quadrupedal herbivore. Defends itself efficiently using sharp conical thumb spikes.",
-        protocol: "Maintain safe distance. Asset will not attack unless directly provoked or trapped."
-      },
-      { 
         name: "Mosasaurus", lat: 25.0343, lng: -77.3963, location: "Nassau, Bahamas", threat: "CRITICAL", diet: "Carnivore", length: "17.0m",
         behavior: "Deep-ocean apex predator. Capable of ambushing surface vessels and dragging large marine life underwater.",
         protocol: "Issue immediate maritime red alert. Suspend all coastal swimming and boat charters."
-      },
-      { 
-        name: "Quetzalcoatlus", lat: 29.4241, lng: -98.4936, location: "San Antonio, USA", threat: "HIGH", diet: "Carnivore", length: "11.0m Wingspan",
-        behavior: "Gigantic azhdarchid pterosaur. Hunts like a giant stork on land, snatching prey with a massive spear-like beak.",
-        protocol: "Secure open plains and airfields. Ground light aircraft and deploy tracking radar."
-      },
-      { 
-        name: "Troodon", lat: 64.8378, lng: -147.7164, location: "Fairbanks, USA", threat: "MEDIUM", diet: "Omnivore", length: "2.4m",
-        behavior: "Nocturnal predator possessing large eyes and exceptional intelligence. Hunts in small groups in low-visibility cold climates.",
-        protocol: "Equip personnel with night-vision scopes and thermal flares."
-      },
-      { 
-        name: "Diplodocus", lat: -26.2041, lng: 28.0473, location: "Johannesburg, South Africa", threat: "LOW", diet: "Herbivore", length: "26.0m",
-        behavior: "Enormous sauropod using its whip-like tail to produce supersonic cracks that intimidate potential threats.",
-        protocol: "Hearing protection required for field teams. Keep asset clear of high-voltage infrastructure."
-      },
-      { 
-        name: "Corythosaurus", lat: 13.7563, lng: 100.5018, location: "Bangkok, Thailand", threat: "LOW", diet: "Herbivore", length: "9.0m",
-        behavior: "Peaceful duck-billed herbivore. Moves in herds around wet, low-lying environments.",
-        protocol: "No aggressive intervention needed. Monitor via satellite telemetry."
-      },
-      { 
-        name: "Albertosaurus", lat: 62.4540, lng: -114.3718, location: "Yellowknife, Canada", threat: "HIGH", diet: "Carnivore", length: "9.0m",
-        behavior: "Slightly smaller, faster cousin of T-Rex. Adapted for cold climates and persistent long-distance tracking.",
-        protocol: "Deploy heavy snow-terrain containment units. Avoid isolated northern outposts."
-      },
-      { 
-        name: "Styracosaurus", lat: 31.2304, lng: 121.4737, location: "Shanghai, China", threat: "MEDIUM", diet: "Herbivore", length: "5.5m",
-        behavior: "Features a massive spiked frill and nose horn. Aggressive herd defender when juveniles are present.",
-        protocol: "Do not attempt to separate herd members. Use aerial scents to guide away from roads."
-      },
-      { 
-        name: "Majungasaurus", lat: -18.8792, lng: 47.5079, location: "Antananarivo, Madagascar", threat: "HIGH", diet: "Carnivore", length: "7.0m",
-        behavior: "Stocky, short-snouted theropod known for aggressive cannibalistic and territorial tendencies.",
-        protocol: "Do not house near other assets. Keep containment zone double-walled."
-      },
-      { 
-        name: "Dimorphodon", lat: 50.7184, lng: -2.4368, location: "Lyme Regis, UK", threat: "LOW", diet: "Piscivore / Insectivore", length: "1.0m Wingspan",
-        behavior: "Small flying reptile with a disproportionately large head. Skittering flight pattern; nests in coastal structures.",
-        protocol: "Deploy sweep nets. Non-lethal pest removal effective."
-      },
-      { 
-        name: "Carcharodontosaurus", lat: 32.8801, lng: 13.1913, location: "Tripoli, Libya", threat: "CRITICAL", diet: "Carnivore", length: "12.5m",
-        behavior: "Massive African apex theropod with shark-like serrated teeth. Highly aggressive territorial defender.",
-        protocol: "Deploy heavy armor units and clear a 3-mile radius around coastal scrub areas."
-      },
-      { 
-        name: "Argentinosaurus", lat: -38.9516, lng: -68.0591, location: "Neuquén, Argentina", threat: "LOW", diet: "Herbivore", length: "35.0m",
-        behavior: "Colossal titanosaur. Ground tremors from movements can disrupt local seismic sensors.",
-        protocol: "Reroute heavy ground transit routes and monitor structural integrity of nearby dams."
-      },
-      { 
-        name: "Acrocanthosaurus", lat: 34.7465, lng: -92.2896, location: "Little Rock, USA", threat: "HIGH", diet: "Carnivore", length: "11.5m",
-        behavior: "High-spined theropod specialized in hunting large sauropods across open floodplains.",
-        protocol: "Deploy elevated surveillance towers and heavy tranquilizer artillery."
-      },
-      { 
-        name: "Utahraptor", lat: 38.5733, lng: -109.5498, location: "Moab, USA", threat: "CRITICAL", diet: "Carnivore", length: "5.7m",
-        behavior: "Largest known dromaeosaur. Combines massive physical strength with pack tactics and stealth.",
-        protocol: "Equip response units with thermal night vision and motion detectors. Avoid canyon corridors."
-      },
-      { 
-        name: "Borealopelta", lat: 56.7264, lng: -111.3803, location: "Fort McMurray, Canada", threat: "LOW", diet: "Herbivore", length: "5.5m",
-        behavior: "Extremely heavily armored nodosaur featuring natural camouflage patterns.",
-        protocol: "Non-hostile. Maintain non-invasive acoustic boundaries."
-      },
-      { 
-        name: "Microraptor", lat: 41.7960, lng: 123.4315, location: "Shenyang, China", threat: "LOW", diet: "Carnivore / Insectivore", length: "0.8m",
-        behavior: "Four-winged arboreal glider. Hunts small vertebrates from tree canopies.",
-        protocol: "Deploy fine netting arrays along forest boundaries."
-      },
-      { 
-        name: "Mapusaurus", lat: -42.7692, lng: -65.0385, location: "Puerto Madryn, Argentina", threat: "CRITICAL", diet: "Carnivore", length: "12.2m",
-        behavior: "Forms loose hunting groups to take down massive sauropod prey.",
-        protocol: "Requires coordinated multi-vehicle containment response with heavy tranquilizer loads."
-      },
-      { 
-        name: "Amargasaurus", lat: -31.4201, lng: -64.1888, location: "Córdoba, Argentina", threat: "LOW", diet: "Herbivore", length: "10.0m",
-        behavior: "Sauropod with double rows of tall neck spines used for display and threat deterrence.",
-        protocol: "Maintain a perimeter of 30 meters to avoid startling display charges."
-      },
-      { 
-        name: "Guanlong", lat: 43.8256, lng: 87.6168, location: "Ürümqi, China", threat: "MEDIUM", diet: "Carnivore", length: "3.0m",
-        behavior: "Early proceratosaurid displaying high speed and agility in mountainous terrain.",
-        protocol: "Deploy mountain-terrain tracking drones equipped with tranquilizers."
-      },
-      { 
-        name: "Dracorex", lat: 44.3668, lng: -100.3538, location: "Pierre, USA", threat: "MEDIUM", diet: "Herbivore", length: "3.0m",
-        behavior: "Spiked pachycephalosaur known to charge vehicles when startled.",
-        protocol: "Use soft-walled barriers and sound-dampening sirens during transport."
-      },
-      { 
-        name: "Monolophosaurus", lat: 44.3000, lng: 86.0000, location: "Junggar Basin, China", threat: "HIGH", diet: "Carnivore", length: "5.5m",
-        behavior: "Medium theropod with a single prominent cranial crest used for species recognition.",
-        protocol: "Set up perimeter electric fencing around dense brush habitats."
-      },
-      { 
-        name: "Cryolophosaurus", lat: -77.8460, lng: 166.6760, location: "McMurdo Station, Antarctica", threat: "HIGH", diet: "Carnivore", length: "6.5m",
-        behavior: "Adapted to cold polar environments with a distinctive forward-pointing crest.",
-        protocol: "Deploy heated mobile containment stations with reinforced hulls."
-      },
-      { 
-        name: "Ouranosaurus", lat: 13.5116, lng: 2.1254, location: "Niamey, Niger", threat: "LOW", diet: "Herbivore", length: "7.0m",
-        behavior: "Sail-backed iguanodontian adapted to river floodplains.",
-        protocol: "Monitor herd movements along major river channels using aerial assets."
-      },
-      { 
-        name: "Irritator", lat: -7.2372, lng: -39.4144, location: "Crato, Brazil", threat: "MEDIUM", diet: "Piscivore", length: "8.0m",
-        behavior: "Spinosaurid specialized in rapid water-surface strikes on fish and small land targets.",
-        protocol: "Restrict local fishing and watercraft activity near marshlands."
-      },
-      { 
-        name: "Concavenator", lat: 40.0704, lng: -2.1374, location: "Cuenca, Spain", threat: "HIGH", diet: "Carnivore", length: "6.0m",
-        behavior: "Features a hump-like sail over its hips and quill knobs along its forelimbs.",
-        protocol: "Deploy motion sensors along rocky hillsides and forested valleys."
-      },
-      { 
-        name: "Nothronychus", lat: 35.0844, lng: -106.6504, location: "Albuquerque, USA", threat: "MEDIUM", diet: "Herbivore", length: "5.3m",
-        behavior: "Therizinosaurid with long curved claws used to strip vegetation from branches.",
-        protocol: "Maintain safe distance during foraging periods; avoid cornering."
-      },
-      { 
-        name: "Saurophaganax", lat: 35.4676, lng: -97.5164, location: "Oklahoma City, USA", threat: "CRITICAL", diet: "Carnivore", length: "10.5m",
-        behavior: "Massive allosaurid capable of preying on giant herbivores across prairie terrain.",
-        protocol: "Issue immediate red alert and deploy heavy armored containment units."
-      },
-      { 
-        name: "Eoraptor", lat: -30.1500, lng: -67.9000, location: "Ischigualasto, Argentina", threat: "LOW", diet: "Omnivore", length: "1.0m",
-        behavior: "Small, fast-running basal dinosaur that scavenges in small groups.",
-        protocol: "Use standard non-lethal fauna traps for containment."
-      },
-      { 
-        name: "Edmontosaurus", lat: 46.8083, lng: -100.7837, location: "Bismarck, USA", threat: "LOW", diet: "Herbivore", length: "12.0m",
-        behavior: "Large duck-billed dinosaur moving in massive migratory herds.",
-        protocol: "Guide herds away from agricultural zones using non-lethal drone sweeps."
-      },
-      { 
-        name: "Tarbosaurus", lat: 47.9200, lng: 106.9200, location: "Gobi Desert, Mongolia", threat: "CRITICAL", diet: "Carnivore", length: "10.0m",
-        behavior: "Apex theropod closely related to T-Rex, adapted to dry desert basins.",
-        protocol: "Establish broad seismic monitoring arrays across desert outposts."
-      },
-      
-      /* --- MOSASAUR SPECIES --- */
-      { 
-        name: "Tylosaurus", lat: 26.5000, lng: -45.0000, location: "North Atlantic Ocean", threat: "CRITICAL", diet: "Carnivore / Marine Predator", length: "14.0m",
-        behavior: "Dominant pelagic mosasaur with a cylindrical elongated snout used to ram and stun aquatic prey. Hunts in deep open waters.",
-        protocol: "Keep surface vessels clear of active acoustic signals. Deploy depth sonar lures to redirect asset away from shipping lanes."
-      },
-      { 
-        name: "Protosphyraena", lat: -14.2000, lng: -112.5000, location: "South Pacific Ocean", threat: "MEDIUM", diet: "Piscivore", length: "3.0m",
-        behavior: "Swordfish-like predatory marine reptile featuring long needle-like teeth and pectoral fins. Swift surface hunter.",
-        protocol: "Monitor sub-surface fish schools. Deploy localized high-frequency sound barriers around commercial fishing vessels."
-      },
-      { 
-        name: "Globidens", lat: 3.5000, lng: 70.2000, location: "Indian Ocean", threat: "MEDIUM", diet: "Durophagous (Mollusks / Turtles)", length: "6.0m",
-        behavior: "Specialized mosasaur with spherical globe-like teeth designed to crush hard shells and marine armor along reef beds.",
-        protocol: "Clear deep-sea diving ops and underwater infrastructure projects. Maintain non-invasive sonar telemetry."
-      },
-      { 
-        name: "Halisaurus", lat: -56.3000, lng: -24.8000, location: "Southern Ocean", threat: "LOW", diet: "Piscivore / Cephalopods", length: "3.0m",
-        behavior: "Agile, smaller-sized mosasaur that frequents cold open sea currents and hunts squid and small pelagic fish.",
-        protocol: "Non-aggressive toward large ships. Deploy acoustic pingers to keep away from active icebreaker routes."
-      },
-      { 
-        name: "Plotosaurus", lat: 18.2000, lng: -140.5000, location: "Central Pacific Ocean", threat: "HIGH", diet: "Carnivore", length: "9.0m",
-        behavior: "Highly evolved oceanic mosasaur with streamline fusiform body built for high-speed open-ocean pursuit of prey.",
-        protocol: "Reroute trans-Pacific oceanic research vessels. Deploy depth transponders to monitor deep-water migrations."
-      },
-
-      /* --- OCEANIC MARINE ANIMALS --- */
-      { 
-        name: "Elasmosaurus", lat: 34.0000, lng: -155.0000, location: "North Pacific Ocean", threat: "MEDIUM", diet: "Piscivore", length: "10.3m",
-        behavior: "Long-necked plesiosaur with an exceptionally flexible neck. Sweeps through schools of fish and squid near the surface.",
-        protocol: "Deploy underwater acoustic decoys. Maintain safe clearance for light watercraft and recreational divers."
-      },
-      { 
-        name: "Liopleurodon", lat: 45.0000, lng: -15.0000, location: "North Atlantic Trench", threat: "CRITICAL", diet: "Carnivore", length: "6.4m",
-        behavior: "Short-necked pliosaur and massive ambush hunter. Uses powerful flippers for explosive bursts of speed from thermal depths.",
-        protocol: "Restrict sub-surface submarine operations. Deploy heavy electrical defense grids around offshore platforms."
-      },
-      { 
-        name: "Megalodon", lat: 20.0000, lng: 130.0000, location: "Philippine Sea", threat: "CRITICAL", diet: "Carnivore", length: "16.0m",
-        behavior: "Colossal prehistoric shark with crushing bite force. Targets large marine mammals and surface transport vessels.",
-        protocol: "Issue Level-5 naval alert. Restrict maritime transit routes and deploy deep-sea electrical disruption buoys."
-      },
-      { 
-        name: "Ichthyosaurus", lat: -20.0000, lng: 80.0000, location: "Central Indian Ocean", threat: "LOW", diet: "Piscivore / Cephalopods", length: "3.3m",
-        behavior: "Dolphin-like marine reptile traveling in fast-moving pods. Non-aggressive to large vessels, feeds mainly on squid.",
-        protocol: "Monitor pod migrations using satellite tracking. Avoid deploying high-decibel naval sonar arrays."
-      },
-      { 
-        name: "Plesiosaurus", lat: 60.0000, lng: -50.0000, location: "Labrador Sea", threat: "LOW", diet: "Piscivore", length: "3.5m",
-        behavior: "Classic long-necked marine reptile adapted to cold northern waters. Uses inter-locking teeth to catch slippery prey.",
-        protocol: "Non-hostile asset. Maintain passive underwater hydrophone surveillance."
-      },
-      { 
-        name: "Kronosaurus", lat: -25.0000, lng: 105.0000, location: "Southeast Indian Ocean", threat: "CRITICAL", diet: "Carnivore", length: "10.0m",
-        behavior: "Giant short-necked pliosaur featuring massive jaws built to crush turtle shells and large marine creatures.",
-        protocol: "Establish sub-surface quarantine perimeter. Authorize heavy naval escort for transit vessels."
-      },
-      { 
-        name: "Shonisaurus", lat: 48.0000, lng: -170.0000, location: "Aleutian Trench", threat: "MEDIUM", diet: "Piscivore / Squid", length: "15.0m",
-        behavior: "Enormous deep-diving ichthyosaur. Deep-water feeder that surfaces primarily to breathe, capable of long migrations.",
-        protocol: "Track via deep-sea sonar buoys. Keep submarine sonar levels low to avoid disorienting the asset."
-      },
-      { 
-        name: "Dacosaurus", lat: -45.0000, lng: -60.0000, location: "South Atlantic Ocean", threat: "HIGH", diet: "Carnivore", length: "4.5m",
-        behavior: "Fully aquatic marine crocodile relative with paddle-like limbs and a finned tail. Highly aggressive predator.",
-        protocol: "Reroute coastal fishing vessels. Deploy sonar barrier arrays to secure shallow shelf waters."
-      },
-      { 
-        name: "Styxosaurus", lat: -65.0000, lng: 140.0000, location: "Southern Ocean / East Antarctica", threat: "MEDIUM", diet: "Piscivore", length: "11.0m",
-        behavior: "Extremely long-necked elasmosaurid hunting in icy, nutrient-rich waters. Uses gastroliths (stomach stones) for buoyancy.",
-        protocol: "Maintain vessel clearance of 200 meters. Monitor movement relative to polar research stations."
-      },
-      { 
-        name: "Xiphactinus", lat: 10.0000, lng: -70.0000, location: "Caribbean Sea", threat: "HIGH", diet: "Carnivore", length: "5.1m",
-        behavior: "Voracious, giant predatory bony fish capable of swallowing prey whole. Fast surface swimmer with massive leaping capability.",
-        protocol: "Issue warning to local fisheries. Deploy net barriers around coastal swimming areas."
       }
     ];
 
@@ -603,46 +292,54 @@
       }
     };
 
-    // Filter out items that shoot vertical volumetric sky beams
-    const beamData = dinoSightings.filter(d => d.hasBeam).map(d => ({
-      startLat: d.lat,
-      startLng: d.lng,
-      endLat: d.lat,
-      endLng: d.lng
-    }));
+    // Filter locations that get the thick 3D vertical beam
+    const customBeamData = dinoSightings.filter(d => d.hasBeam);
 
     const world = Globe()
       (document.getElementById('globeViz'))
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-      
-      /* --- VOLUMETRIC THICK BEAM SETTINGS --- */
-      .arcsData(beamData)
-      .arcStartLat(d => d.startLat)
-      .arcStartLng(d => d.startLng)
-      .arcEndLat(d => d.endLat)
-      .arcEndLng(d => d.endLng)
-      .arcAltitude(0.6)
-      .arcColor(() => ['rgba(0, 162, 255, 0.85)', 'rgba(0, 212, 255, 0.2)'])
-      .arcStroke(2.5)                /* High pixel thickness value */
-      .arcCurveResolution(64)        /* Forces 3D tube geometry mesh (bypasses browser 1px WebGL limit) */
-      .arcDashLength(1)
-      .arcDashGap(0)
-      .arcDashInitialGap(0)
+
+      /* --- REAL THICK 3D CYLINDER VERTICAL BEAM --- */
+      .customLayerData(customBeamData)
+      .customThreeObject(d => {
+        // Create genuine 3D Cylinder geometry (radiusTop, radiusBottom, height, segments)
+        // Increase 2.5 to make it even THICKER if needed!
+        const beamRadius = 2.5; 
+        const beamHeight = 95; 
+        const geometry = new THREE.CylinderGeometry(beamRadius, beamRadius, beamHeight, 32);
+
+        // Position cylinder base at origin, extending upward along Y
+        geometry.translate(0, beamHeight / 2, 0);
+
+        // Translucent glowing material
+        const material = new THREE.MeshBasicMaterial({
+          color: 0x00a2ff,
+          transparent: true,
+          opacity: 0.65,
+          side: THREE.DoubleSide
+        });
+
+        return new THREE.Mesh(geometry, material);
+      })
+      .customThreeObjectUpdate((obj, d) => {
+        Object.assign(obj.position, world.getCoords(d.lat, d.lng, 0));
+      })
 
       .ringsData(dinoSightings)
       .ringColor(d => t => {
-        if (d.customColor) return `rgba(59, 130, 246, ${(1 - t) * 0.5})`;
+        if (d.customColor) return `rgba(59, 130, 246, ${(1 - t) * 0.7})`;
         const c = d.threat === 'CRITICAL' ? '239, 68, 68' : d.threat === 'HIGH' ? '249, 115, 22' : '34, 197, 94';
         return `rgba(${c}, ${1 - t})`;
       })
-      .ringMaxRadius(d => d.hasBeam ? 8 : 4)
-      .ringPropagationSpeed(d => d.hasBeam ? 3.5 : 2.5)
+      .ringMaxRadius(d => d.hasBeam ? 10 : 4)
+      .ringPropagationSpeed(d => d.hasBeam ? 4.0 : 2.5)
       .ringRepeatPeriod(1200)
+
       .pointsData(dinoSightings)
       .pointColor(d => getColor(d))
       .pointAltitude(d => d.hasBeam ? 0.05 : 0.02)
-      .pointRadius(d => d.hasBeam ? 0.9 : 0.5)
+      .pointRadius(d => d.hasBeam ? 1.2 : 0.5)
       .onPointClick(point => {
         world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.6 }, 1000);
         openCard(point);

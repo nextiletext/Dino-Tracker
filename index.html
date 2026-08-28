@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Global Dino Tracker - Live Grid</title>
+  <title>Global Dino Tracker - Tactical Grid</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -46,10 +46,10 @@
     #dino-card {
       position: absolute;
       top: 20px;
-      right: -400px;
-      width: 350px;
+      right: -420px;
+      width: 380px;
       max-height: calc(100vh - 40px);
-      background: rgba(17, 24, 39, 0.92);
+      background: rgba(17, 24, 39, 0.95);
       border: 1px solid #374151;
       border-radius: 12px;
       padding: 0;
@@ -64,49 +64,38 @@
       right: 20px;
     }
 
-    .card-image-container {
+    .card-header {
       position: relative;
-      width: 100%;
-      height: 220px;
+      padding: 20px 20px 15px 20px;
       background: #1f2937;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
-      overflow: hidden;
-    }
-
-    .card-image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* <--- UPDATED */
-      padding: 10px; /* Optional: adds breathing room around the artwork */
+      border-bottom: 1px solid #374151;
     }
 
     .close-btn {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.6);
-      border: none;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
       width: 28px;
       height: 28px;
       border-radius: 50%;
       cursor: pointer;
       font-weight: bold;
-      z-index: 5;
     }
 
-    .card-body {
-      padding: 20px;
+    .close-btn:hover {
+      background: rgba(239, 68, 68, 0.4);
     }
 
-    .card-body h2 {
-      margin: 0 0 5px 0;
+    .card-header h2 {
+      margin: 0 0 8px 0;
       font-size: 1.4rem;
       color: #ffffff;
+      padding-right: 30px;
     }
 
     .badge {
@@ -115,7 +104,6 @@
       border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 700;
-      margin-bottom: 15px;
       text-transform: uppercase;
     }
 
@@ -123,6 +111,10 @@
     .threat-HIGH { background: #7c2d12; color: #fdba74; border: 1px solid #f97316; }
     .threat-MEDIUM { background: #713f12; color: #fde047; border: 1px solid #eab308; }
     .threat-LOW { background: #14532d; color: #86efac; border: 1px solid #22c55e; }
+
+    .card-body {
+      padding: 20px;
+    }
 
     .stat-row {
       display: flex;
@@ -132,9 +124,37 @@
       font-size: 0.85rem;
     }
 
-    .stat-row:last-child { border-bottom: none; }
     .label { color: #9ca3af; }
     .value { font-weight: 600; color: #e5e7eb; }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #22c55e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    .info-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #d1d5db;
+    }
+
+    /* Scrollbar styling */
+    #dino-card::-webkit-scrollbar {
+      width: 6px;
+    }
+    #dino-card::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
   </style>
 
   <script src="//unpkg.com/globe.gl"></script>
@@ -142,60 +162,186 @@
 <body>
 
   <div class="header">
-    <h1>DinoTracker Live</h1>
-    <p>Real-Time Wikipedia Image Integration</p>
+    <h1>DinoTracker Operations</h1>
+    <p>Live Containment & Behavior Field Grid</p>
   </div>
 
   <div id="globeViz"></div>
 
+  <!-- Detailed Intelligence Profile -->
   <div id="dino-card">
-    <div class="card-image-container">
+    <div class="card-header">
       <button class="close-btn" onclick="closeCard()">✕</button>
-      <img id="card-img" src="" alt="Loading Image..." />
-    </div>
-    <div class="card-body">
       <h2 id="card-name">Species Name</h2>
       <span id="card-threat" class="badge">Threat</span>
-      
+    </div>
+    <div class="card-body">
       <div class="stat-row"><span class="label">Location:</span><span class="value" id="card-loc">-</span></div>
       <div class="stat-row"><span class="label">Diet:</span><span class="value" id="card-diet">-</span></div>
       <div class="stat-row"><span class="label">Length:</span><span class="value" id="card-length">-</span></div>
       <div class="stat-row"><span class="label">Coordinates:</span><span class="value" id="card-coords">-</span></div>
+
+      <div class="section-title">Behavioral Field Report</div>
+      <div class="info-box" id="card-behavior">-</div>
+
+      <div class="section-title">Containment & Advisory Protocol</div>
+      <div class="info-box" id="card-protocol">-</div>
     </div>
   </div>
 
   <script>
+    // 30 Dinosaurs with Behavioral Information
     const dinoSightings = [
-      { name: "Tyrannosaurus", lat: 40.7128, lng: -74.0060, location: "New York, USA", threat: "CRITICAL", diet: "Carnivore", length: "12.3m" },
-      { name: "Velociraptor", lat: 51.5074, lng: -0.1278, location: "London, UK", threat: "HIGH", diet: "Carnivore", length: "2.0m" },
-      { name: "Spinosaurus", lat: 30.0444, lng: 31.2357, location: "Cairo, Egypt", threat: "CRITICAL", diet: "Piscivore", length: "15.0m" },
-      { name: "Triceratops", lat: -33.8688, lng: 151.2093, location: "Sydney, Australia", threat: "LOW", diet: "Herbivore", length: "9.0m" },
-      { name: "Brachiosaurus", lat: -22.9068, lng: -43.1729, location: "Rio de Janeiro, Brazil", threat: "LOW", diet: "Herbivore", length: "23.0m" },
-      { name: "Dilophosaurus", lat: 35.6762, lng: 139.6503, location: "Tokyo, Japan", threat: "MEDIUM", diet: "Carnivore", length: "7.0m" },
-      { name: "Pteranodon", lat: -1.2921, lng: 36.8219, location: "Nairobi, Kenya", threat: "MEDIUM", diet: "Piscivore", length: "6.0m Wingspan" },
-      { name: "Ankylosaurus", lat: 48.8566, lng: 2.3522, location: "Paris, France", threat: "LOW", diet: "Herbivore", length: "8.0m" },
-      { name: "Stegosaurus", lat: 19.4326, lng: -99.1332, location: "Mexico City, Mexico", threat: "MEDIUM", diet: "Herbivore", length: "9.0m" },
-      { name: "Carnotaurus", lat: -34.6037, lng: -58.3816, location: "Buenos Aires, Argentina", threat: "HIGH", diet: "Carnivore", length: "7.8m" },
-      { name: "Allosaurus", lat: 37.7749, lng: -122.4194, location: "San Francisco, USA", threat: "CRITICAL", diet: "Carnivore", length: "9.7m" },
-      { name: "Giganotosaurus", lat: -15.7975, lng: -47.8919, location: "Brasília, Brazil", threat: "CRITICAL", diet: "Carnivore", length: "13.0m" },
-      { name: "Baryonyx", lat: 53.4808, lng: -2.2426, location: "Manchester, UK", threat: "MEDIUM", diet: "Piscivore", length: "10.0m" },
-      { name: "Parasaurolophus", lat: 51.0447, lng: -114.0719, location: "Calgary, Canada", threat: "LOW", diet: "Herbivore", length: "9.5m" },
-      { name: "Compsognathus", lat: 48.1351, lng: 11.5820, location: "Munich, Germany", threat: "LOW", diet: "Carnivore", length: "1.0m" },
-      { name: "Therizinosaurus", lat: 47.9188, lng: 106.9176, location: "Ulaanbaatar, Mongolia", threat: "HIGH", diet: "Herbivore", length: "10.0m" },
-      { name: "Pachycephalosaurus", lat: 44.0805, lng: -103.2310, location: "Rapid City, USA", threat: "MEDIUM", diet: "Herbivore", length: "4.5m" },
-      { name: "Gallimimus", lat: 37.5665, lng: 126.9780, location: "Seoul, South Korea", threat: "LOW", diet: "Omnivore", length: "6.0m" },
-      { name: "Ceratosaurus", lat: 41.9028, lng: 12.4964, location: "Rome, Italy", threat: "HIGH", diet: "Carnivore", length: "6.0m" },
-      { name: "Deinonychus", lat: 45.5017, lng: -73.5673, location: "Montreal, Canada", threat: "HIGH", diet: "Carnivore", length: "3.4m" },
-      { name: "Iguanodon", lat: 50.8503, lng: 4.3517, location: "Brussels, Belgium", threat: "LOW", diet: "Herbivore", length: "10.0m" },
-      { name: "Mosasaurus", lat: 25.0343, lng: -77.3963, location: "Nassau, Bahamas", threat: "CRITICAL", diet: "Carnivore", length: "17.0m" },
-      { name: "Quetzalcoatlus", lat: 29.4241, lng: -98.4936, location: "San Antonio, USA", threat: "HIGH", diet: "Carnivore", length: "11.0m Wingspan" },
-      { name: "Troodon", lat: 64.8378, lng: -147.7164, location: "Fairbanks, USA", threat: "MEDIUM", diet: "Omnivore", length: "2.4m" },
-      { name: "Diplodocus", lat: -26.2041, lng: 28.0473, location: "Johannesburg, South Africa", threat: "LOW", diet: "Herbivore", length: "26.0m" },
-      { name: "Corythosaurus", lat: 13.7563, lng: 100.5018, location: "Bangkok, Thailand", threat: "LOW", diet: "Herbivore", length: "9.0m" },
-      { name: "Albertosaurus", lat: 62.4540, lng: -114.3718, location: "Yellowknife, Canada", threat: "HIGH", diet: "Carnivore", length: "9.0m" },
-      { name: "Styracosaurus", lat: 31.2304, lng: 121.4737, location: "Shanghai, China", threat: "MEDIUM", diet: "Herbivore", length: "5.5m" },
-      { name: "Majungasaurus", lat: -18.8792, lng: 47.5079, location: "Antananarivo, Madagascar", threat: "HIGH", diet: "Carnivore", length: "7.0m" },
-      { name: "Dimorphodon", lat: 50.7184, lng: -2.4368, location: "Lyme Regis, UK", threat: "LOW", diet: "Piscivore", length: "1.0m Wingspan" }
+      { 
+        name: "Tyrannosaurus Rex", lat: 40.7128, lng: -74.0060, location: "New York, USA", threat: "CRITICAL", diet: "Carnivore", length: "12.3m",
+        behavior: "Apex solitary predator. Displays ambush hunting behaviors around urban transit routes. Highly sensitive to ground vibrations.",
+        protocol: "Evacuate a 2-mile radius immediately. Do not run in open spaces. Heavy armored containment vehicles required."
+      },
+      { 
+        name: "Velociraptor", lat: 51.5074, lng: -0.1278, location: "London, UK", threat: "HIGH", diet: "Carnivore", length: "2.0m",
+        behavior: "Pack hunter demonstrating high problem-solving intelligence. Known to stalk targets from flanks using structure cover.",
+        protocol: "Maintain 360-degree perimeter awareness. Never travel alone. Thermal tracking cameras mandatory."
+      },
+      { 
+        name: "Spinosaurus", lat: 30.0444, lng: 31.2357, location: "Cairo, Egypt", threat: "CRITICAL", diet: "Piscivore / Opportunistic Carnivore", length: "15.0m",
+        behavior: "Semi-aquatic and highly territorial around major waterways. Attacks both surface vessels and shoreline wildlife.",
+        protocol: "Clear all harbor and river traffic. Deploy sonar disruption arrays to prevent shoreline approaches."
+      },
+      { 
+        name: "Triceratops", lat: -33.8688, lng: 151.2093, location: "Sydney, Australia", threat: "LOW", diet: "Herbivore", length: "9.0m",
+        behavior: "Generally non-aggressive unless startled or cornered. Herding instinct; prone to sudden territorial charges if approached quickly.",
+        protocol: "Keep a distance of at least 50 meters. Avoid sudden movement or loud mechanized noises."
+      },
+      { 
+        name: "Brachiosaurus", lat: -22.9068, lng: -43.1729, location: "Rio de Janeiro, Brazil", threat: "LOW", diet: "Herbivore", length: "23.0m",
+        behavior: "Docile sauropod moving in small family units. Forages high canopy foliage and causes accidental structural damage due to mass.",
+        protocol: "Reroute overhead traffic and powerlines. Establish gentle acoustic boundaries to guide away from residential zones."
+      },
+      { 
+        name: "Dilophosaurus", lat: 35.6762, lng: 139.6503, location: "Tokyo, Japan", threat: "MEDIUM", diet: "Carnivore", length: "7.0m",
+        behavior: "Nocturnal stalker. Emits soft vocal trills before spitting a blinding neurotoxic venom prior to striking.",
+        protocol: "Full face-shield protection mandatory for field responders. Keep high-intensity floodlights operational."
+      },
+      { 
+        name: "Pteranodon", lat: -1.2921, lng: 36.8219, location: "Nairobi, Kenya", threat: "MEDIUM", diet: "Piscivore", length: "6.0m Wingspan",
+        behavior: "Nests on high-elevation structures and cliffs. Dives at high speed to snatch prey from ground or water surfaces.",
+        protocol: "Ground low-flying air craft. Deploy net-cannons on rooftop perimeter stations."
+      },
+      { 
+        name: "Ankylosaurus", lat: 48.8566, lng: 2.3522, location: "Paris, France", threat: "LOW", diet: "Herbivore", length: "8.0m",
+        behavior: "Heavily armored and solitary. Docile until threatened, at which point it swings its heavy tail club with lethal force.",
+        protocol: "Do not attempt physical blockade. Use lure scents to move asset onto non-paved land."
+      },
+      { 
+        name: "Stegosaurus", lat: 19.4326, lng: -99.1332, location: "Mexico City, Mexico", threat: "MEDIUM", diet: "Herbivore", length: "9.0m",
+        behavior: "Slow-moving herbivore with a quick-reacting tail (thagomizer). Easily agitated by bright lights or flashing vehicles.",
+        protocol: "Approach from the side using suppressed vehicle engines. Never stand behind the asset."
+      },
+      { 
+        name: "Carnotaurus", lat: -34.6037, lng: -58.3816, location: "Buenos Aires, Argentina", threat: "HIGH", diet: "Carnivore", length: "7.8m",
+        behavior: "Sprint predator capable of short bursts of extreme speed. Relies on momentum and headbutting to stun prey.",
+        protocol: "Utilize barricades with sharp angles; asset cannot turn quickly while sprinting."
+      },
+      { 
+        name: "Allosaurus", lat: 37.7749, lng: -122.4194, location: "San Francisco, USA", threat: "CRITICAL", diet: "Carnivore", length: "9.7m",
+        behavior: "Aggressive secondary apex predator. Uses its upper jaw like a hatchet to slash prey in coordinated small group attacks.",
+        protocol: "Immediate area lockdown required. Rapid-response tranquilizer teams to deploy from air support."
+      },
+      { 
+        name: "Giganotosaurus", lat: -15.7975, lng: -47.8919, location: "Brasília, Brazil", threat: "CRITICAL", diet: "Carnivore", length: "13.0m",
+        behavior: "Massive theropod with immense territory range. Dominates other carnivores and aggressively hunts large targets.",
+        protocol: "Level-5 containment emergency. Heavy military-grade deterrents and tranquilizers required."
+      },
+      { 
+        name: "Baryonyx", lat: 53.4808, lng: -2.2426, location: "Manchester, UK", threat: "MEDIUM", diet: "Piscivore / Carnivore", length: "10.0m",
+        behavior: "Frequents wetlands and drainage canals. Uses hook-like thumb claws to spear aquatic prey or drag land prey into water.",
+        protocol: "Drain local canals and secure wetland perimeters with electric fencing."
+      },
+      { 
+        name: "Parasaurolophus", lat: 51.0447, lng: -114.0719, location: "Calgary, Canada", threat: "LOW", diet: "Herbivore", length: "9.5m",
+        behavior: "Social herd animal that communicates using low-frequency acoustic blasts from its cranial crest.",
+        protocol: "Monitor acoustic communications to track herd movements. Non-lethal shepherd methods effective."
+      },
+      { 
+        name: "Compsognathus", lat: 48.1351, lng: 11.5820, location: "Munich, Germany", threat: "LOW", diet: "Carnivore", length: "1.0m",
+        behavior: "Small, inquisitive pack scavengers. Harmless individually, but bold and dangerous to isolated targets in large swarms.",
+        protocol: "Deploy sonic pest deterrents. Inspect small crawlspaces and waste containers."
+      },
+      { 
+        name: "Therizinosaurus", lat: 47.9188, lng: 106.9176, location: "Ulaanbaatar, Mongolia", threat: "HIGH", diet: "Herbivore", length: "10.0m",
+        behavior: "Visually impaired but possesses hypersensitive hearing. Extremely territorial and uses 1-meter long claws defensively.",
+        protocol: "Maintain total silence around asset. Do not enter physical reach under any circumstances."
+      },
+      { 
+        name: "Pachycephalosaurus", lat: 44.0805, lng: -103.2310, location: "Rapid City, USA", threat: "MEDIUM", diet: "Herbivore", length: "4.5m",
+        behavior: "Combative behavior; uses thick domed skull to charge objects, vehicles, and rivals to establish dominance.",
+        protocol: "Do not position vehicles directly in asset line-of-sight. Use soft netting traps."
+      },
+      { 
+        name: "Gallimimus", lat: 37.5665, lng: 126.9780, location: "Seoul, South Korea", threat: "LOW", diet: "Omnivore", length: "6.0m",
+        behavior: "Extremely fast flocking animal (up to 60 km/h). Easily panicked into massive stampedes by sudden movements.",
+        protocol: "Clear roadways to prevent stampede traffic accidents. Guide flock using drone escorts."
+      },
+      { 
+        name: "Ceratosaurus", lat: 41.9028, lng: 12.4964, location: "Rome, Italy", threat: "HIGH", diet: "Carnivore", length: "6.0m",
+        behavior: "Solitary hunter identified by its distinctive nasal horn. Prefers dense brush and strikes quickly from cover.",
+        protocol: "Deploy motion-tracking sensors along forest treelines and clear brush around perimeter zones."
+      },
+      { 
+        name: "Deinonychus", lat: 45.5017, lng: -73.5673, location: "Montreal, Canada", threat: "HIGH", diet: "Carnivore", length: "3.4m",
+        behavior: "Agile, pack-oriented dromaeosaur. Uses large sickle claws to latch onto targets while leaping from elevation.",
+        protocol: "Wear reinforced Kevlar tactical gear. Secure all elevated perimeters and trees."
+      },
+      { 
+        name: "Iguanodon", lat: 50.8503, lng: 4.3517, location: "Brussels, Belgium", threat: "LOW", diet: "Herbivore", length: "10.0m",
+        behavior: "Adaptable bipedal/quadrupedal herbivore. Defends itself efficiently using sharp conical thumb spikes.",
+        protocol: "Maintain safe distance. Asset will not attack unless directly provoked or trapped."
+      },
+      { 
+        name: "Mosasaurus", lat: 25.0343, lng: -77.3963, location: "Nassau, Bahamas", threat: "CRITICAL", diet: "Carnivore", length: "17.0m",
+        behavior: "Deep-ocean apex predator. Capable of ambushing surface vessels and dragging large marine life underwater.",
+        protocol: "Issue immediate maritime red alert. Suspend all coastal swimming and boat charters."
+      },
+      { 
+        name: "Quetzalcoatlus", lat: 29.4241, lng: -98.4936, location: "San Antonio, USA", threat: "HIGH", diet: "Carnivore", length: "11.0m Wingspan",
+        behavior: "Gigantic azhdarchid pterosaur. Hunts like a giant stork on land, snatching prey with a massive spear-like beak.",
+        protocol: "Secure open plains and airfields. Ground light aircraft and deploy tracking radar."
+      },
+      { 
+        name: "Troodon", lat: 64.8378, lng: -147.7164, location: "Fairbanks, USA", threat: "MEDIUM", diet: "Omnivore", length: "2.4m",
+        behavior: "Nocturnal predator possessing large eyes and exceptional intelligence. Hunts in small groups in low-visibility cold climates.",
+        protocol: "Equip personnel with night-vision scopes and thermal flares."
+      },
+      { 
+        name: "Diplodocus", lat: -26.2041, lng: 28.0473, location: "Johannesburg, South Africa", threat: "LOW", diet: "Herbivore", length: "26.0m",
+        behavior: "Enormous sauropod using its whip-like tail to produce supersonic cracks that intimidate potential threats.",
+        protocol: "Hearing protection required for field teams. Keep asset clear of high-voltage infrastructure."
+      },
+      { 
+        name: "Corythosaurus", lat: 13.7563, lng: 100.5018, location: "Bangkok, Thailand", threat: "LOW", diet: "Herbivore", length: "9.0m",
+        behavior: "Peaceful duck-billed herbivore. Moves in herds around wet, low-lying environments.",
+        protocol: "No aggressive intervention needed. Monitor via satellite telemetry."
+      },
+      { 
+        name: "Albertosaurus", lat: 62.4540, lng: -114.3718, location: "Yellowknife, Canada", threat: "HIGH", diet: "Carnivore", length: "9.0m",
+        behavior: "Slightly smaller, faster cousin of T-Rex. Adapted for cold climates and persistent long-distance tracking.",
+        protocol: "Deploy heavy snow-terrain containment units. Avoid isolated northern outposts."
+      },
+      { 
+        name: "Styracosaurus", lat: 31.2304, lng: 121.4737, location: "Shanghai, China", threat: "MEDIUM", diet: "Herbivore", length: "5.5m",
+        behavior: "Features a massive spiked frill and nose horn. Aggressive herd defender when juveniles are present.",
+        protocol: "Do not attempt to separate herd members. Use aerial scents to guide away from roads."
+      },
+      { 
+        name: "Majungasaurus", lat: -18.8792, lng: 47.5079, location: "Antananarivo, Madagascar", threat: "HIGH", diet: "Carnivore", length: "7.0m",
+        behavior: "Stocky, short-snouted theropod known for aggressive cannibalistic and territorial tendencies.",
+        protocol: "Do not house near other assets. Keep containment zone double-walled."
+      },
+      { 
+        name: "Dimorphodon", lat: 50.7184, lng: -2.4368, location: "Lyme Regis, UK", threat: "LOW", diet: "Piscivore / Insectivore", length: "1.0m Wingspan",
+        behavior: "Small flying reptile with a disproportionately large head. Skittering flight pattern; nests in coastal structures.",
+        protocol: "Deploy sweep nets. Non-lethal pest removal effective."
+      }
     ];
 
     const getColor = threat => {
@@ -208,6 +354,7 @@
       }
     };
 
+    // Initialize 3D Globe
     const world = Globe()
       (document.getElementById('globeViz'))
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
@@ -232,60 +379,14 @@
     world.controls().autoRotate = true;
     world.controls().autoRotateSpeed = 0.4;
 
-    // Fetch live image from Wikipedia API
-    // Enhanced Fetch: Prioritizes Life Restorations over Skeletons
-    async function fetchWikiImage(dinoName) {
-      const imgElement = document.getElementById('card-img');
-      imgElement.src = ""; // Clear current image
-
-      try {
-        // Query Wikipedia API for all images on the dinosaur's page
-        const response = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(dinoName)}&generator=images&gimlimit=30&prop=imageinfo&iiprop=url&format=json&origin=*`);
-        const data = await response.json();
-        
-        let foundArt = null;
-        
-        if (data.query && data.query.pages) {
-          const pages = Object.values(data.query.pages);
-          
-          // Filter for full-body restorations, avoiding fossils/skulls/skeletons
-          const artFile = pages.find(p => {
-            const title = p.title.toLowerCase();
-            const isImage = title.endsWith('.jpg') || title.endsWith('.png');
-            const isFossil = title.includes('skeleton') || title.includes('skull') || title.includes('fossil') || title.includes('museum') || title.includes('bone') || title.includes('mount');
-            return isImage && !isFossil && (title.includes('life') || title.includes('restoration') || title.includes('resto') || title.includes('durbed') || title.includes('nt'));
-          }) || pages.find(p => {
-            const title = p.title.toLowerCase();
-            return (title.endsWith('.jpg') || title.endsWith('.png')) && !title.includes('skeleton') && !title.includes('skull') && !title.includes('fossil');
-          });
-
-          if (artFile && artFile.imageinfo && artFile.imageinfo[0]) {
-            foundArt = artFile.imageinfo[0].url;
-          }
-        }
-
-        // Fallback to Wikipedia summary if the search query finds no match
-        if (!foundArt) {
-          const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dinoName)}`);
-          const summaryData = await summaryRes.json();
-          foundArt = summaryData.thumbnail ? summaryData.thumbnail.source : null;
-        }
-
-        imgElement.src = foundArt || "https://via.placeholder.com/400x220/1f2937/ffffff?text=No+Art+Found";
-        
-      } catch (err) {
-        imgElement.src = "https://via.placeholder.com/400x220/1f2937/ffffff?text=Image+Load+Error";
-      }
-    }
-
     function openCard(data) {
-      fetchWikiImage(data.name);
-      
       document.getElementById('card-name').innerText = data.name;
       document.getElementById('card-loc').innerText = data.location;
       document.getElementById('card-diet').innerText = data.diet;
       document.getElementById('card-length').innerText = data.length;
       document.getElementById('card-coords').innerText = `${data.lat.toFixed(2)}°, ${data.lng.toFixed(2)}°`;
+      document.getElementById('card-behavior').innerText = data.behavior;
+      document.getElementById('card-protocol').innerText = data.protocol;
       
       const threatBadge = document.getElementById('card-threat');
       threatBadge.innerText = `${data.threat} THREAT`;

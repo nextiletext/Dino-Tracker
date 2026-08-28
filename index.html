@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Global Dino Tracker</title>
+  <title>Global Dino Tracker - Live Grid</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 0;
       background-color: #030712;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       overflow: hidden;
       color: #f3f4f6;
     }
@@ -19,7 +20,7 @@
       height: 100vh;
     }
 
-    /* UI Overlay */
+    /* Top Left Overlay Header */
     .header {
       position: absolute;
       top: 20px;
@@ -30,48 +31,106 @@
 
     h1 {
       margin: 0;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       letter-spacing: 2px;
       color: #22c55e;
       text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+      text-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
     }
 
     p {
-      margin: 5px 0 0 0;
-      font-size: 0.9rem;
-      color: #9ca3af;
-    }
-
-    /* Info Panel for Active Sightings */
-    #info-panel {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      width: 280px;
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid #374151;
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(8px);
-      display: none;
-    }
-
-    #info-panel h3 {
-      margin-top: 0;
-      color: #ef4444;
-      font-size: 1.1rem;
-    }
-
-    .stat {
+      margin: 4px 0 0 0;
       font-size: 0.85rem;
-      margin-bottom: 6px;
-    }
-
-    .stat-label {
       color: #9ca3af;
     }
+
+    /* Slide-out Dino Profile Drawer */
+    #dino-card {
+      position: absolute;
+      top: 20px;
+      right: -400px;
+      width: 350px;
+      max-height: calc(100vh - 40px);
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 0;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      z-index: 20;
+      overflow-y: auto;
+      transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #dino-card.active {
+      right: 20px;
+    }
+
+    .card-image-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .card-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-body h2 {
+      margin: 0 0 5px 0;
+      font-size: 1.4rem;
+      color: #ffffff;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+
+    .threat-CRITICAL { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+    .threat-HIGH { background: #7c2d12; color: #fdba74; border: 1px solid #f97316; }
+    .threat-MEDIUM { background: #713f12; color: #fde047; border: 1px solid #eab308; }
+    .threat-LOW { background: #14532d; color: #86efac; border: 1px solid #22c55e; }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.85rem;
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+    .label { color: #9ca3af; }
+    .value { font-weight: 600; color: #e5e7eb; }
   </style>
 
   <script src="//unpkg.com/globe.gl"></script>
@@ -79,30 +138,73 @@
 <body>
 
   <div class="header">
-    <h1>DinoTracker Live</h1>
-    <p>Real-time Fictional Containment & Sightings Map</p>
+    <h1>DinoTracker Operations</h1>
+    <p>30 Global Asset Sightings Detected</p>
   </div>
 
   <div id="globeViz"></div>
 
-  <div id="info-panel">
-    <h3 id="dino-species">Species Name</h3>
-    <div class="stat"><span class="stat-label">Location:</span> <span id="dino-location">-</span></div>
-    <div class="stat"><span class="stat-label">Threat Level:</span> <span id="dino-threat">-</span></div>
-    <div class="stat"><span class="stat-label">Status:</span> <span id="dino-status">-</span></div>
+  <div id="dino-card">
+    <div class="card-image-container">
+      <button class="close-btn" onclick="closeCard()">✕</button>
+      <img id="card-img" src="" alt="Dinosaur" />
+    </div>
+    <div class="card-body">
+      <h2 id="card-name">Species Name</h2>
+      <span id="card-threat" class="badge">Threat</span>
+      
+      <div class="stat-row"><span class="label">Location:</span><span class="value" id="card-loc">-</span></div>
+      <div class="stat-row"><span class="label">Diet:</span><span class="value" id="card-diet">-</span></div>
+      <div class="stat-row"><span class="label">Length:</span><span class="value" id="card-length">-</span></div>
+      <div class="stat-row"><span class="label">Coordinates:</span><span class="value" id="card-coords">-</span></div>
+    </div>
   </div>
 
   <script>
-    // Mock Sighting Data (Latitude, Longitude, Threat, Name)
+    // 30 Fictional Dino Sightings around the World
     const dinoSightings = [
-      { name: "Tyrannosaurus Rex", lat: 40.7128, lng: -74.0060, location: "New York, USA", threat: "CRITICAL", color: "#ef4444" },
-      { name: "Velociraptor Pack", lat: 51.5074, lng: -0.1278, location: "London, UK", threat: "HIGH", color: "#f97316" },
-      { name: "Spinosaurus", lat: 30.0444, lng: 31.2357, location: "Cairo, Egypt", threat: "CRITICAL", color: "#ef4444" },
-      { name: "Triceratops", lat: -33.8688, lng: 151.2093, location: "Sydney, Australia", threat: "LOW", color: "#eab308" },
-      { name: "Brachiosaurus", lat: -22.9068, lng: -43.1729, location: "Rio de Janeiro, Brazil", threat: "LOW", color: "#22c55e" },
-      { name: "Dilophosaurus", lat: 35.6762, lng: 139.6503, location: "Tokyo, Japan", threat: "MEDIUM", color: "#f97316" },
-      { name: "Pteranodon", lat: -1.2921, lng: 36.8219, location: "Nairobi, Kenya", threat: "MEDIUM", color: "#f97316" }
+      { name: "Tyrannosaurus Rex", lat: 40.7128, lng: -74.0060, location: "New York, USA", threat: "CRITICAL", diet: "Carnivore", length: "12.3m", img: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?w=500" },
+      { name: "Velociraptor", lat: 51.5074, lng: -0.1278, location: "London, UK", threat: "HIGH", diet: "Carnivore", length: "2.0m", img: "https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=500" },
+      { name: "Spinosaurus", lat: 30.0444, lng: 31.2357, location: "Cairo, Egypt", threat: "CRITICAL", diet: "Piscivore", length: "15.0m", img: "https://images.unsplash.com/photo-1525877442103-5ddb2089e2bb?w=500" },
+      { name: "Triceratops", lat: -33.8688, lng: 151.2093, location: "Sydney, Australia", threat: "LOW", diet: "Herbivore", length: "9.0m", img: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500" },
+      { name: "Brachiosaurus", lat: -22.9068, lng: -43.1729, location: "Rio de Janeiro, Brazil", threat: "LOW", diet: "Herbivore", length: "23.0m", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500" },
+      { name: "Dilophosaurus", lat: 35.6762, lng: 139.6503, location: "Tokyo, Japan", threat: "MEDIUM", diet: "Carnivore", length: "7.0m", img: "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=500" },
+      { name: "Pteranodon", lat: -1.2921, lng: 36.8219, location: "Nairobi, Kenya", threat: "MEDIUM", diet: "Piscivore", length: "6.0m Wingspan", img: "https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=500" },
+      { name: "Ankylosaurus", lat: 48.8566, lng: 2.3522, location: "Paris, France", threat: "LOW", diet: "Herbivore", length: "8.0m", img: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500" },
+      { name: "Stegosaurus", lat: 19.4326, lng: -99.1332, location: "Mexico City, Mexico", threat: "MEDIUM", diet: "Herbivore", length: "9.0m", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500" },
+      { name: "Carnotaurus", lat: -34.6037, lng: -58.3816, location: "Buenos Aires, Argentina", threat: "HIGH", diet: "Carnivore", length: "7.8m", img: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?w=500" },
+      { name: "Allosaurus", lat: 37.7749, lng: -122.4194, location: "San Francisco, USA", threat: "CRITICAL", diet: "Carnivore", length: "9.7m", img: "https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=500" },
+      { name: "Giganotosaurus", lat: -15.7975, lng: -47.8919, location: "Brasília, Brazil", threat: "CRITICAL", diet: "Carnivore", length: "13.0m", img: "https://images.unsplash.com/photo-1525877442103-5ddb2089e2bb?w=500" },
+      { name: "Baryonyx", lat: 53.4808, lng: -2.2426, location: "Manchester, UK", threat: "MEDIUM", diet: "Piscivore", length: "10.0m", img: "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=500" },
+      { name: "Parasaurolophus", lat: 51.0447, lng: -114.0719, location: "Calgary, Canada", threat: "LOW", diet: "Herbivore", length: "9.5m", img: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500" },
+      { name: "Compsognathus", lat: 48.1351, lng: 11.5820, location: "Munich, Germany", threat: "LOW", diet: "Carnivore", length: "1.0m", img: "https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=500" },
+      { name: "Therizinosaurus", lat: 47.9188, lng: 106.9176, location: "Ulaanbaatar, Mongolia", threat: "HIGH", diet: "Herbivore", length: "10.0m", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500" },
+      { name: "Pachycephalosaurus", lat: 44.0805, lng: -103.2310, location: "Rapid City, USA", threat: "MEDIUM", diet: "Herbivore", length: "4.5m", img: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500" },
+      { name: "Gallimimus", lat: 37.5665, lng: 126.9780, location: "Seoul, South Korea", threat: "LOW", diet: "Omnivore", length: "6.0m", img: "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=500" },
+      { name: "Ceratosaurus", lat: 41.9028, lng: 12.4964, location: "Rome, Italy", threat: "HIGH", diet: "Carnivore", length: "6.0m", img: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?w=500" },
+      { name: "Deinonychus", lat: 45.5017, lng: -73.5673, location: "Montreal, Canada", threat: "HIGH", diet: "Carnivore", length: "3.4m", img: "https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=500" },
+      { name: "Iguanodon", lat: 50.8503, lng: 4.3517, location: "Brussels, Belgium", threat: "LOW", diet: "Herbivore", length: "10.0m", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500" },
+      { name: "Mosasaurus", lat: 25.0343, lng: -77.3963, location: "Nassau, Bahamas", threat: "CRITICAL", diet: "Carnivore", length: "17.0m", img: "https://images.unsplash.com/photo-1525877442103-5ddb2089e2bb?w=500" },
+      { name: "Quetzalcoatlus", lat: 29.4241, lng: -98.4936, location: "San Antonio, USA", threat: "HIGH", diet: "Carnivore", length: "11.0m Wingspan", img: "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=500" },
+      { name: "Troodon", lat: 64.8378, lng: -147.7164, location: "Fairbanks, USA", threat: "MEDIUM", diet: "Omnivore", length: "2.4m", img: "https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=500" },
+      { name: "Diplodocus", lat: -26.2041, lng: 28.0473, location: "Johannesburg, South Africa", threat: "LOW", diet: "Herbivore", length: "26.0m", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500" },
+      { name: "Corythosaurus", lat: 13.7563, lng: 100.5018, location: "Bangkok, Thailand", threat: "LOW", diet: "Herbivore", length: "9.0m", img: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500" },
+      { name: "Albertosaurus", lat: 62.4540, lng: -114.3718, location: "Yellowknife, Canada", threat: "HIGH", diet: "Carnivore", length: "9.0m", img: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?w=500" },
+      { name: "Styracosaurus", lat: 31.2304, lng: 121.4737, location: "Shanghai, China", threat: "MEDIUM", diet: "Herbivore", length: "5.5m", img: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500" },
+      { name: "Majungasaurus", lat: -18.8792, lng: 47.5079, location: "Antananarivo, Madagascar", threat: "HIGH", diet: "Carnivore", length: "7.0m", img: "https://images.unsplash.com/photo-1525877442103-5ddb2089e2bb?w=500" },
+      { name: "Dimorphodon", lat: 50.7184, lng: -2.4368, location: "Lyme Regis, UK", threat: "LOW", diet: "Piscivore", length: "1.0m Wingspan", img: "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=500" }
     ];
+
+    // Map threat level to color codes
+    const getColor = threat => {
+      switch(threat) {
+        case 'CRITICAL': return '#ef4444';
+        case 'HIGH': return '#f97316';
+        case 'MEDIUM': return '#eab308';
+        case 'LOW': return '#22c55e';
+        default: return '#3b82f6';
+      }
+    };
 
     // Initialize Globe
     const world = Globe()
@@ -110,35 +212,53 @@
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
       
-      // Add red/orange/yellow glowing rings for sightings
+      // Animated Pulse Rings
       .ringsData(dinoSightings)
-      .ringColor(d => t => `rgba(${d.threat === 'CRITICAL' ? '239, 68, 68' : '234, 179, 8'}, ${1 - t})`)
-      .ringMaxRadius(5)
-      .ringPropagationSpeed(3)
-      .ringRepeatPeriod(1000)
+      .ringColor(d => t => {
+        const c = d.threat === 'CRITICAL' ? '239, 68, 68' : d.threat === 'HIGH' ? '249, 115, 22' : '34, 197, 94';
+        return `rgba(${c}, ${1 - t})`;
+      })
+      .ringMaxRadius(4)
+      .ringPropagationSpeed(2.5)
+      .ringRepeatPeriod(1200)
 
-      // Add dot markers
+      // Dinosaur Sighting Dots
       .pointsData(dinoSightings)
-      .pointColor(d => d.color)
+      .pointColor(d => getColor(d.threat))
       .pointAltitude(0.02)
-      .pointRadius(0.6)
+      .pointRadius(0.5)
       
       // Click interaction
       .onPointClick(point => {
-        // Auto-focus camera on clicked marker
-        world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.5 }, 1000);
+        // Focus camera on marker
+        world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.6 }, 1000);
         
-        // Show info panel with dino data
-        document.getElementById('info-panel').style.display = 'block';
-        document.getElementById('dino-species').innerText = point.name;
-        document.getElementById('dino-location').innerText = point.location;
-        document.getElementById('dino-threat').innerText = point.threat;
-        document.getElementById('dino-status').innerText = "Active Search Engaged";
+        // Open Dino Profile Drawer
+        openCard(point);
       });
 
-    // Auto-rotate globe slowly
+    // Rotation Control
     world.controls().autoRotate = true;
-    world.controls().autoRotateSpeed = 0.5;
+    world.controls().autoRotateSpeed = 0.4;
+
+    function openCard(data) {
+      document.getElementById('card-img').src = data.img;
+      document.getElementById('card-name').innerText = data.name;
+      document.getElementById('card-loc').innerText = data.location;
+      document.getElementById('card-diet').innerText = data.diet;
+      document.getElementById('card-length').innerText = data.length;
+      document.getElementById('card-coords').innerText = `${data.lat.toFixed(2)}°, ${data.lng.toFixed(2)}°`;
+      
+      const threatBadge = document.getElementById('card-threat');
+      threatBadge.innerText = `${data.threat} THREAT`;
+      threatBadge.className = `badge threat-${data.threat}`;
+      
+      document.getElementById('dino-card').classList.add('active');
+    }
+
+    function closeCard() {
+      document.getElementById('dino-card').classList.remove('active');
+    }
   </script>
 </body>
 </html>

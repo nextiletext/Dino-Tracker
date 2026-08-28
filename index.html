@@ -184,7 +184,6 @@
       color: #d1d5db;
     }
 
-    /* Learn More Button Styling */
     .wiki-link {
       display: inline-flex;
       align-items: center;
@@ -244,7 +243,7 @@
       <div class="section-title">Behavioral Field Report</div>
       <div class="info-box" id="card-behavior">-</div>
       
-      <!-- Custom External Wiki/Fandom Link -->
+      <!-- Custom External Link -->
       <a id="card-wiki" href="#" target="_blank" class="wiki-link">
         Learn More ↗
       </a>
@@ -256,13 +255,14 @@
 
   <script>
     const dinoSightings = [
-      /* --- BIOSYN HEADQUARTERS MARKER (BLUE) --- */
+      /* --- BIOSYN HEADQUARTERS MARKER IN ITALY WITH SKY BEAM --- */
       { 
-        name: "Biosyn Headquarters", lat: 85.0000, lng: 0.0000, location: "Arctic Circle", threat: "CRITICAL", diet: "N/A (Research Facility)", length: "Facility Complex",
+        name: "Biosyn Headquarters", lat: 46.4100, lng: 11.8500, location: "Dolomites, Italy", threat: "CRITICAL", diet: "N/A (Research Facility)", length: "Valley Complex",
         customColor: "#3b82f6",
+        hasBeam: true,
         customUrl: "https://jurassicpark.fandom.com/wiki/Biosyn_Research_Facility",
-        behavior: "High-security global genetics research and containment sanctuary situated in isolated arctic territory. Conducts advanced apex cloning and bio-engineering operations.",
-        protocol: "Restricted airspace. Authorized personnel only. Level-5 security clearance required for entry."
+        behavior: "High-security global genetics research facility and prehistoric sanctuary tucked in the Italian Dolomites. Conducts apex cloning, containment, and bio-engineering operations.",
+        protocol: "Restricted valley airspace. Level-5 security clearance required for valley perimeter passage."
       },
       { 
         name: "Tyrannosaurus Rex", lat: 40.7128, lng: -74.0060, location: "New York, USA", threat: "CRITICAL", diet: "Carnivore", length: "12.3m",
@@ -606,23 +606,46 @@
       }
     };
 
+    // Filter out items that shoot vertical sky beams
+    const beamData = dinoSightings.filter(d => d.hasBeam).map(d => ({
+      startLat: d.lat,
+      startLng: d.lng,
+      endLat: d.lat,
+      endLng: d.lng,
+      color: d.customColor || '#3b82f6'
+    }));
+
     const world = Globe()
       (document.getElementById('globeViz'))
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+      
+      /* Glowing Sky Beam for Biosyn HQ */
+      .arcsData(beamData)
+      .arcStartLat(d => d.startLat)
+      .arcStartLng(d => d.startLng)
+      .arcEndLat(d => d.endLat)
+      .arcEndLng(d => d.endLng)
+      .arcAltitude(0.6)
+      .arcColor(d => [d.color, 'rgba(0, 212, 255, 0.9)'])
+      .arcStroke(1.2)
+      .arcDashLength(1)
+      .arcDashGap(0)
+      .arcDashInitialGap(0)
+
       .ringsData(dinoSightings)
       .ringColor(d => t => {
         if (d.customColor) return `rgba(59, 130, 246, ${1 - t})`;
         const c = d.threat === 'CRITICAL' ? '239, 68, 68' : d.threat === 'HIGH' ? '249, 115, 22' : '34, 197, 94';
         return `rgba(${c}, ${1 - t})`;
       })
-      .ringMaxRadius(4)
-      .ringPropagationSpeed(2.5)
+      .ringMaxRadius(d => d.hasBeam ? 8 : 4)
+      .ringPropagationSpeed(d => d.hasBeam ? 3.5 : 2.5)
       .ringRepeatPeriod(1200)
       .pointsData(dinoSightings)
       .pointColor(d => getColor(d))
-      .pointAltitude(0.02)
-      .pointRadius(0.5)
+      .pointAltitude(d => d.hasBeam ? 0.05 : 0.02)
+      .pointRadius(d => d.hasBeam ? 0.9 : 0.5)
       .onPointClick(point => {
         world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.6 }, 1000);
         openCard(point);

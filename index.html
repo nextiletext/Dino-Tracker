@@ -255,7 +255,7 @@
 
   <script>
     const dinoSightings = [
-      /* --- BIOSYN HEADQUARTERS MARKER IN ITALY WITH TRANSPARENT BEAM --- */
+      /* --- BIOSYN HEADQUARTERS MARKER IN ITALY WITH ULTRA-TRANSPARENT BEAM --- */
       { 
         name: "Biosyn Headquarters", lat: 46.4100, lng: 11.8500, location: "Dolomites, Italy", threat: "CRITICAL", diet: "N/A (Research Facility)", length: "Valley Complex",
         customColor: "#3b82f6",
@@ -606,7 +606,7 @@
       }
     };
 
-    // Filter out items that shoot vertical transparent sky beams
+    // Filter out items that shoot vertical ultra-transparent sky beams
     const beamData = dinoSightings.filter(d => d.hasBeam).map(d => ({
       startLat: d.lat,
       startLng: d.lng,
@@ -619,22 +619,22 @@
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
       
-      /* Subtle Semi-Transparent Glowing Sky Beam for Biosyn HQ */
+      /* Almost Invisible/Barely Visible Sky Beam for Biosyn HQ */
       .arcsData(beamData)
       .arcStartLat(d => d.startLat)
       .arcStartLng(d => d.startLng)
       .arcEndLat(d => d.endLat)
       .arcEndLng(d => d.endLng)
       .arcAltitude(0.6)
-      .arcColor(() => ['rgba(0, 162, 255, 0.35)', 'rgba(0, 212, 255, 0.05)'])
-      .arcStroke(0.8)
+      .arcColor(() => ['rgba(0, 162, 255, 0.08)', 'rgba(0, 212, 255, 0.01)'])
+      .arcStroke(0.35)
       .arcDashLength(1)
       .arcDashGap(0)
       .arcDashInitialGap(0)
 
       .ringsData(dinoSightings)
       .ringColor(d => t => {
-        if (d.customColor) return `rgba(59, 130, 246, ${(1 - t) * 0.4})`;
+        if (d.customColor) return `rgba(59, 130, 246, ${(1 - t) * 0.25})`;
         const c = d.threat === 'CRITICAL' ? '239, 68, 68' : d.threat === 'HIGH' ? '249, 115, 22' : '34, 197, 94';
         return `rgba(${c}, ${1 - t})`;
       })

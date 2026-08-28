@@ -16,6 +16,28 @@
       overflow: hidden;
       color: #f3f4f6;
     }
+    #theme-toggle {
+  position: fixed;
+  bottom: 60px; /* Positions it right above the watermark */
+  left: 20px;
+  z-index: 9999;
+  padding: 6px 12px;
+  background: rgba(17, 24, 39, 0.85);
+  color: #22c55e;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+#theme-toggle:hover {
+  background: rgba(31, 41, 55, 0.95);
+  border-color: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
 
     #globeViz {
       position: absolute;
@@ -225,6 +247,8 @@
   <a href="https://guns.lol/nextile" target="_blank" class="watermark">
     ©2026 NEXTILE COPYRIGHT RESREVED
   </a>
+
+  <button id="theme-toggle" onclick="toggleDayNight()">Toggle Day / Night</button>
 
   <div id="dino-card">
     <div class="card-header">
@@ -685,6 +709,21 @@
     function closeCard() {
       document.getElementById('dino-card').classList.remove('active');
     }
+    let isNight = true;
+
+function toggleDayNight() {
+  isNight = !isNight;
+  
+  if (isNight) {
+    world
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
+  } else {
+    world
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
+  }
+}
   </script>
 </body>
 </html>

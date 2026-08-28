@@ -232,20 +232,46 @@
     world.controls().autoRotateSpeed = 0.4;
 
     // Fetch live image from Wikipedia API
+    // Enhanced Fetch: Prioritizes Life Restorations over Skeletons
     async function fetchWikiImage(dinoName) {
       const imgElement = document.getElementById('card-img');
       imgElement.src = ""; // Clear current image
 
       try {
-        const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dinoName)}`);
+        // Query Wikipedia API for all images on the dinosaur's page
+        const response = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(dinoName)}&generator=images&gimlimit=30&prop=imageinfo&iiprop=url&format=json&origin=*`);
         const data = await response.json();
         
-        if (data.thumbnail && data.thumbnail.source) {
-          imgElement.src = data.thumbnail.source;
-        } else {
-          // Fallback image if Wikipedia article has no thumbnail
-          imgElement.src = "https://via.placeholder.com/400x220/1f2937/ffffff?text=No+Image+Available";
+        let foundArt = null;
+        
+        if (data.query && data.query.pages) {
+          const pages = Object.values(data.query.pages);
+          
+          // Filter for full-body restorations, avoiding fossils/skulls/skeletons
+          const artFile = pages.find(p => {
+            const title = p.title.toLowerCase();
+            const isImage = title.endsWith('.jpg') || title.endsWith('.png');
+            const isFossil = title.includes('skeleton') || title.includes('skull') || title.includes('fossil') || title.includes('museum') || title.includes('bone') || title.includes('mount');
+            return isImage && !isFossil && (title.includes('life') || title.includes('restoration') || title.includes('resto') || title.includes('durbed') || title.includes('nt'));
+          }) || pages.find(p => {
+            const title = p.title.toLowerCase();
+            return (title.endsWith('.jpg') || title.endsWith('.png')) && !title.includes('skeleton') && !title.includes('skull') && !title.includes('fossil');
+          });
+
+          if (artFile && artFile.imageinfo && artFile.imageinfo[0]) {
+            foundArt = artFile.imageinfo[0].url;
+          }
         }
+
+        // Fallback to Wikipedia summary if the search query finds no match
+        if (!foundArt) {
+          const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dinoName)}`);
+          const summaryData = await summaryRes.json();
+          foundArt = summaryData.thumbnail ? summaryData.thumbnail.source : null;
+        }
+
+        imgElement.src = foundArt || "https://via.placeholder.com/400x220/1f2937/ffffff?text=No+Art+Found";
+        
       } catch (err) {
         imgElement.src = "https://via.placeholder.com/400x220/1f2937/ffffff?text=Image+Load+Error";
       }

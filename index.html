@@ -668,17 +668,17 @@
         return `rgba(${c}, ${1 - t})`;
       })
       .ringMaxRadius(d => d.hasBeam ? 8 : 4)
-      .ringPropagationSpeed(d => d.hasBeam ? 3.5 : 2.5)
-      .ringRepeatPeriod(1200)
-      .pointsData(dinoSightings)
-      .pointColor(d => getColor(d))
-      .pointAltitude(d => d.hasBeam ? 0.05 : 0.02)
-      .pointRadius(d => d.hasBeam ? 0.9 : 0.5)
-      .onPointClick(point => {
-        world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.6 }, 1000);
-        openCard(point);
-      });
-
+.ringPropagationSpeed(d => d.hasBeam ? 3.5 : 2.5)
+.ringRepeatPeriod(1200)
+.pointsData(dinoSightings)
+.pointColor(d => getColor(d))
+.pointAltitude(d => d.hasBeam ? 0.05 : 0.02)
+.pointRadius(d => d.hasBeam ? 1.5 : 0.6)
+.pointerEventsFilter(() => true)
+.onPointClick(point => {
+  world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.6 }, 1000);
+  openCard(point);
+});
     world.controls().autoRotate = true;
     world.controls().autoRotateSpeed = 0.4;
 

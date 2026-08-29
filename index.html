@@ -741,6 +741,18 @@ world
   .ringMaxRadius(d => d.hasBeam ? 6 : 2.5)
   .ringPropagationSpeed(2.0)
   .arcCurveResolution(12);
+
+    // Place at the very bottom of your <script>
+world.pointerEventsFilter(() => true);
+
+world.onCustomLayerClick((obj) => {
+  if (obj.__data) openCard(obj.__data);
+  else openCard(obj);
+});
+
+world.onObjectClick((obj) => {
+  if (obj.__data) openCard(obj.__data);
+});
   </script>
 </body>
 </html>

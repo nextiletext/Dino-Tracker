@@ -832,41 +832,81 @@ const searchBtn = document.getElementById('search-btn');
 const searchError = document.getElementById('search-error');
 const searchResults = document.getElementById('search-results');
 
-function performSearch(query) {
-  const cleanQuery = query.trim().toLowerCase();
+// 1. Live Dropdown Filtering as the user types
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim().toLowerCase();
   searchError.style.display = 'none';
-  searchResults.style.display = 'none';
+  searchResults.innerHTML = '';
 
-  if (!cleanQuery) return;
+  if (!query) {
+    searchResults.style.display = 'none';
+    return;
+  }
 
-  // Search inside your dinoSightings array
-  const match = dinoSightings.find(d => 
-    d.name && d.name.toLowerCase().includes(cleanQuery)
+  // Find all dinosaurs matching the typed query
+  const matches = dinoSightings.filter(d => 
+    d.name && d.name.toLowerCase().includes(query)
   );
 
-  if (match) {
-    // Fly camera to location & open info card
-    world.pointOfView({ lat: match.lat, lng: match.lng, altitude: 1.6 }, 1500);
-    openCard(match);
-    searchInput.value = '';
+  if (matches.length > 0) {
+    searchResults.style.display = 'block';
+    matches.forEach(match => {
+      const item = document.createElement('div');
+      item.className = 'search-item';
+      item.innerText = match.name;
+      
+      // Click item in dropdown to navigate
+      item.addEventListener('click', () => {
+        goToDino(match);
+      });
+      searchResults.appendChild(item);
+    });
   } else {
-    // Show custom missing message
+    searchResults.style.display = 'none';
+  }
+});
+
+// 2. Perform Exact Search (Button or Enter Key)
+function performSearch() {
+  const query = searchInput.value.trim().toLowerCase();
+  searchResults.style.display = 'none';
+
+  if (!query) return;
+
+  // Require an EXACT name match so incomplete/invalid names trigger the error
+  const exactMatch = dinoSightings.find(d => 
+    d.name && d.name.toLowerCase() === query
+  );
+
+  if (exactMatch) {
+    goToDino(exactMatch);
+  } else {
+    // Show error if invalid, incomplete, or not in array
     searchError.innerText = "Sorry that dinosaur is not in our database";
     searchError.style.display = 'block';
   }
 }
 
-// Click search button
-searchBtn.addEventListener('click', () => performSearch(searchInput.value));
+// 3. Helper to fly camera and open card
+function goToDino(dino) {
+  world.pointOfView({ lat: dino.lat, lng: dino.lng, altitude: 1.6 }, 1500);
+  openCard(dino);
+  searchInput.value = '';
+  searchResults.style.display = 'none';
+  searchError.style.display = 'none';
+}
 
-// Press Enter key
+// Event Listeners
+searchBtn.addEventListener('click', performSearch);
 searchInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') performSearch(searchInput.value);
+  if (e.key === 'Enter') performSearch();
 });
 
-// Hide error message when user starts typing again
-searchInput.addEventListener('input', () => {
-  searchError.style.display = 'none';
+// Hide dropdown if clicking anywhere outside the search container
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('search-container').contains(e.target)) {
+    searchResults.style.display = 'none';
+  }
 });
   </script>
 </body>

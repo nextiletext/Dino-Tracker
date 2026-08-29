@@ -724,14 +724,16 @@ function toggleDayNight() {
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
   }
 }
-    // 1. Lower pixel ratio to boost frame rate on high-res laptop screens
-world.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+ // Maximum FPS Optimization
+world.renderer().setPixelRatio(1.0);
+world.renderer().shadowMap.enabled = false;
+world.renderer().powerPreference = "high-performance";
 
-// 2. Adjust polygon detail on the arcs/beams
 world
-  .arcCurveResolution(24) // Lower from 64 to 24 (huge performance gain)
-  .ringMaxRadius(d => d.hasBeam ? 8 : 3)
-  .ringPropagationSpeed(2.0);
+  .pointsTransitionDuration(0)
+  .ringMaxRadius(d => d.hasBeam ? 6 : 2.5)
+  .ringPropagationSpeed(2.0)
+  .arcCurveResolution(12);
   </script>
 </body>
 </html>

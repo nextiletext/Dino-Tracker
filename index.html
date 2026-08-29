@@ -635,10 +635,17 @@
       endLng: d.lng
     }));
 
-    const world = Globe()
-      (document.getElementById('globeViz'))
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+  const world = Globe()
+  (document.getElementById('globeViz'))
+  .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+  .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+  .pointerEventsFilter(() => true)
+  .onPointClick((point) => openCard(point))
+  .onObjectClick((obj) => {
+    if (obj.__data) openCard(obj.__data);
+  })
+
+/* --- VOLUMETRIC THICK BEAM SETTINGS --- */
       
       /* --- VOLUMETRIC THICK BEAM SETTINGS --- */
       .arcsData(beamData)

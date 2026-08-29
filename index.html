@@ -753,6 +753,13 @@ world.onCustomLayerClick((obj) => {
 world.onObjectClick((obj) => {
   if (obj.__data) openCard(obj.__data);
 });
+    // Fixes top-down clicks on 3D beams
+world.onCustomLayerClick(d => {
+  if (d) {
+    world.pointOfView({ lat: d.lat, lng: d.lng, altitude: 1.6 }, 1000);
+    openCard(d);
+  }
+});
   </script>
 </body>
 </html>

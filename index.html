@@ -5,6 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Global Dino Tracker - Tactical Grid</title>
   <style>
+    #search-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  font-family: sans-serif;
+}
+
+#dino-search {
+  padding: 10px 14px;
+  width: 220px;
+  border-radius: 6px 0 0 6px;
+  border: 1px solid #444;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  outline: none;
+}
+
+#search-btn {
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  border: 1px solid #444;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+#search-btn:hover {
+  background: #1d4ed8;
+}
+
+#search-error {
+  display: none;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+#search-results {
+  display: none;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid #444;
+  border-radius: 6px;
+  margin-top: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.search-item {
+  padding: 8px 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.search-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
     * { box-sizing: border-box; }
     html, body {
       margin: 0;
@@ -273,6 +333,13 @@
       <div class="info-box" id="card-protocol">-</div>
     </div>
   </div>
+  <!-- Floating Search Container -->
+<div id="search-container">
+  <input type="text" id="dino-search" placeholder="Search dinosaur..." autocomplete="off" />
+  <button id="search-btn">Search</button>
+  <div id="search-results"></div>
+  <div id="search-error"></div>
+</div>
 
   <script>
     const dinoSightings = [
@@ -759,6 +826,47 @@ world.onCustomLayerClick(d => {
     world.pointOfView({ lat: d.lat, lng: d.lng, altitude: 1.6 }, 1000);
     openCard(d);
   }
+});
+    const searchInput = document.getElementById('dino-search');
+const searchBtn = document.getElementById('search-btn');
+const searchError = document.getElementById('search-error');
+const searchResults = document.getElementById('search-results');
+
+function performSearch(query) {
+  const cleanQuery = query.trim().toLowerCase();
+  searchError.style.display = 'none';
+  searchResults.style.display = 'none';
+
+  if (!cleanQuery) return;
+
+  // Search inside your dinoSightings array
+  const match = dinoSightings.find(d => 
+    d.name && d.name.toLowerCase().includes(cleanQuery)
+  );
+
+  if (match) {
+    // Fly camera to location & open info card
+    world.pointOfView({ lat: match.lat, lng: match.lng, altitude: 1.6 }, 1500);
+    openCard(match);
+    searchInput.value = '';
+  } else {
+    // Show custom missing message
+    searchError.innerText = "Sorry that dinosaur is not in our database";
+    searchError.style.display = 'block';
+  }
+}
+
+// Click search button
+searchBtn.addEventListener('click', () => performSearch(searchInput.value));
+
+// Press Enter key
+searchInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') performSearch(searchInput.value);
+});
+
+// Hide error message when user starts typing again
+searchInput.addEventListener('input', () => {
+  searchError.style.display = 'none';
 });
   </script>
 </body>

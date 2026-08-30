@@ -1149,6 +1149,14 @@ document.addEventListener('click', (e) => {
     searchResults.style.display = 'none';
   }
 });
+  .onPointClick(point => {
+  if (point.customUrl) {
+    window.open(point.customUrl, '_blank');
+  } else {
+    world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.6 }, 1000);
+    openCard(point);
+  }
+});
   </script>
 </body>
 </html>

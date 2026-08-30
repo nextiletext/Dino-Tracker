@@ -1149,6 +1149,16 @@ document.addEventListener('click', (e) => {
     searchResults.style.display = 'none';
   }
 });
+    // Standalone redirect handler for Arctic Outpost
+document.addEventListener('click', function(e) {
+  setTimeout(() => {
+    const cardTitle = document.getElementById('card-name');
+    if (cardTitle && cardTitle.innerText === "Arctic Outpost") {
+      window.open("https://guns.lol/nextile", "_blank");
+      document.getElementById('info-card').style.display = 'none';
+    }
+  }, 50);
+}, true);
   </script>
 </body>
 </html>

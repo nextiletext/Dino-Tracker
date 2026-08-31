@@ -294,8 +294,34 @@
   </style>
 
   <script src="//unpkg.com/globe.gl"></script>
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+  <script>
+    let deferredPrompt;
+
+    // Listen for the browser's install prompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing automatically on mobile
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Show a custom confirmation box to the user
+        const installApp = confirm("Would you like to install Dino Tracker as an App on your home screen?");
+        
+        if (installApp) {
+            // Show the native app installation prompt
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+            });
+        }
+    });
+</script>
 
   <div class="header">
     <h1>DinoTracker Operations</h1>
